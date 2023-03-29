@@ -9,7 +9,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 public @interface Marker {
-    String uniqueCheckName();
+    String uniqueCheckName() default "";
 
-    Class<?> router();
+    //    Class<?> router();
+    boolean isDefault() default false;
+
 }
