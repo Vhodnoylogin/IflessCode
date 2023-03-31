@@ -8,47 +8,61 @@ import com.demo.ifless.scanner.SuperScanner;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
-public class Router<T> {
+public abstract class Router<T> {
+    public static final String NON_SPECIFIC_NAME = "";
+    private static final Class<Marker> MARKER = Marker.class;
     private final Map<String, Supplier<T>> map = new HashMap<>();
-    private Class<T> clazz;
+    private final Class<T> clazz;
 
-    protected Router() {
+    protected Router(Class<T> clazz) {
+        this.clazz = clazz;
         init();
     }
 
     private void init() {
-        for (Class<?> clazz : SuperScanner.ALL_CLASSES.findAnnotations(Marker.class)) {
-            var name = clazz.getAnnotation(Marker.class).uniqueCheckName();
-            name = "".equals(name) ? clazz.getName() : name;
-            name = clazz.getAnnotation(Marker.class).isDefault() ? "" : name;
+        Predicate<Class<?>> findRouterPredicate =
+                x -> x.getAnnotation(MARKER).router() == this.clazz;
 
+        Function<Class<?>, String> nameFunc = x -> {
+            var name = clazz.getAnnotation(MARKER).uniqueCheckName();
+            name = NON_SPECIFIC_NAME.equals(name) ? clazz.getName() : name;
+            name = clazz.getAnnotation(MARKER).isDefault() ? NON_SPECIFIC_NAME : name;
+            return name;
+        };
 
-            Supplier<T> sup;
-            sup = () -> {
-                try {
-                    return ((Class<T>) clazz).getConstructor().newInstance();
-                } catch (InvocationTargetException | InstantiationException | IllegalAccessException |
-                         NoSuchMethodException e) {
-                    throw new CreateObjectException(e);
-                }
-            };
+        Function<Class<?>, Supplier<T>> genFunc = x ->
+                () -> {
+                    try {
+                        return ((Class<T>) x).getConstructor().newInstance();
+                    } catch (InvocationTargetException | InstantiationException | IllegalAccessException |
+                             NoSuchMethodException e) {
+                        throw new CreateObjectException(e);
+                    }
+                };
 
-            this.map.put(name, sup);
-        }
+        var allGenObjects = SuperScanner.ALL_CLASSES
+                .findAnnotatedClasses(MARKER)
+                .stream()
+                .filter(findRouterPredicate)
+                .collect(Collectors.toMap(nameFunc, genFunc));
+
+        this.map.putAll(allGenObjects);
     }
 
-    public T getObject(String key) {
-        if(this.map.containsKey(key)){
+    public T getObject(String key) throws NoDefaultObjectException, CreateObjectException {
+        if (this.map.containsKey(key)) {
             var res = this.map.get(key).get();
-            this.map.put(key, ()-> res);
+            this.map.put(key, () -> res);
             return res;
         }
-        if(this.map.containsKey("")){
-            var res = this.map.get("").get();
-            this.map.put(key, ()-> res);
+        if (this.map.containsKey(NON_SPECIFIC_NAME)) {
+            var res = this.map.get(NON_SPECIFIC_NAME).get();
+            this.map.put(key, () -> res);
             return res;
         }
         throw new NoDefaultObjectException();

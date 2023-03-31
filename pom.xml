@@ -15,11 +15,173 @@
     </properties>
 
     <dependencies>
+
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>31.1-jre</version>
+            <scope>compile</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.26</version>
+            <scope>provided</scope>
+        </dependency>
+
+<!--        <dependency>-->
+<!--            <groupId>jakarta.servlet</groupId>-->
+<!--            <artifactId>jakarta.servlet-api</artifactId>-->
+<!--            <version>6.0.0</version>-->
+<!--        </dependency>-->
+
+
+        <!--Зависимости для логирования-->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.4.6</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>2.0.6</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <version>1.4.6</version>
+            <scope>compile</scope>
+        </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>org.apache.logging.log4j</groupId>-->
+        <!--            <artifactId>log4j-api</artifactId>-->
+        <!--            <version>2.20.0</version>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.apache.logging.log4j</groupId>-->
+        <!--            <artifactId>log4j-core</artifactId>-->
+        <!--            <version>2.20.0</version>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.apache.logging.log4j</groupId>-->
+        <!--            <artifactId>log4j-slf4j-impl</artifactId>-->
+        <!--            <version>2.20.0</version>-->
+        <!--        </dependency>-->
+        <!-- -->
+
+        <!--Зависимости для тестирования-->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>5.9.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.9.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>3.24.2</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>5.2.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-api-mockito2</artifactId>
+            <version>2.0.9</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>5.2.0</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- -->
     </dependencies>
 
+    <build>
+        <plugins>
+            <!--            <plugin>-->
+            <!--                <groupId>org.sonatype.plugins</groupId>-->
+            <!--                <artifactId>nexus-staging-maven-plugin</artifactId>-->
+            <!--                <version>1.5.1</version>-->
+            <!--                <executions>-->
+            <!--                    <execution>-->
+            <!--                        <id>default-deploy</id>-->
+            <!--                        <phase>deploy</phase>-->
+            <!--                        <goals>-->
+            <!--                            <goal>deploy</goal>-->
+            <!--                        </goals>-->
+            <!--                    </execution>-->
+            <!--                </executions>-->
+            <!--                <configuration>-->
+            <!--                    <serverId>nexus</serverId>-->
+            <!--                    <nexusUrl>http://localhost:8081/nexus/</nexusUrl>-->
+            <!--                    <skipStaging>true</skipStaging>-->
+            <!--                </configuration>-->
+            <!--            </plugin>-->
+
+            <!--            <plugin>-->
+            <!--                <groupId>org.apache.maven.plugins</groupId>-->
+            <!--                <artifactId>maven-jar-plugin</artifactId>-->
+            <!--                <version>3.3.0</version>-->
+            <!--                <executions>-->
+            <!--                    <execution>-->
+            <!--                        <goals>-->
+            <!--                            <goal>test-jar</goal>-->
+            <!--                        </goals>-->
+            <!--                    </execution>-->
+            <!--                </executions>-->
+            <!--            </plugin>-->
+
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-assembly-plugin</artifactId>-->
+<!--                <version>2.4.1</version>-->
+<!--                <configuration>-->
+<!--                    <descriptorRefs>-->
+<!--                        <descriptorRef>jar-with-dependencies</descriptorRef>-->
+<!--                    </descriptorRefs>-->
+<!--                    <archive>-->
+<!--                        <manifest>-->
+<!--                            <mainClass>com.demo.Main</mainClass>-->
+<!--                        </manifest>-->
+<!--                    </archive>-->
+<!--                    &lt;!&ndash;Ignoring postfix jar-with-dependencies&ndash;&gt;-->
+<!--                    <appendAssemblyId>false</appendAssemblyId>-->
+<!--                </configuration>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <id>make-assembly</id>-->
+<!--                        <phase>package</phase>-->
+<!--                        <goals>-->
+<!--                            <goal>single</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+            </plugin>
+
+        </plugins>
+    </build>
 </project>

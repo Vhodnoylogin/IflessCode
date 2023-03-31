@@ -1,6 +1,7 @@
 package com.demo.ifless.scanner;
 
 import com.google.common.reflect.ClassPath;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -8,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@Slf4j
 public class SuperScanner {
     public static final SuperScanner ALL_CLASSES = new SuperScanner();
 
@@ -23,12 +25,21 @@ public class SuperScanner {
 
     private void init(String rootPackage) {
         try {
-            ClassPath.from(ClassLoader.getSystemClassLoader())
+            var classInfo = ClassPath.from(ClassLoader.getSystemClassLoader())
                     .getAllClasses()
                     .stream()
                     .filter(x -> x.getPackageName().startsWith(rootPackage))
-                    .map(ClassPath.ClassInfo::load)
-                    .forEach(allClasses::add);
+                    .toList();
+            for (var i : classInfo){
+                try{
+                    log.info("{}", i);
+                    var t = i.load();
+                }catch (Exception e){
+//                    log.info("{}",e);
+                }
+            }
+//                    .map(ClassPath.ClassInfo::load);
+//                    .forEach(allClasses::add);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -38,7 +49,7 @@ public class SuperScanner {
         return this.allClasses.stream().toList();
     }
 
-    public <T extends Annotation> List<Class<?>> findAnnotations(Class<T> clazz) {
+    public <T extends Annotation> List<Class<?>> findAnnotatedClasses(Class<T> clazz) {
         return this.allClasses.stream()
                 .filter(x -> x.getAnnotation(clazz) != null)
                 .toList();
