@@ -1,9 +1,9 @@
-package com.demo.ifless.router;
+package com.demo.ifless.runtime.router;
 
-import com.demo.ifless.annotations.Marker;
-import com.demo.ifless.exeptions.CreateObjectException;
-import com.demo.ifless.exeptions.NoDefaultObjectException;
-import com.demo.ifless.scanner.SuperScanner;
+import com.demo.ifless.runtime.annotations.Marker;
+import com.demo.ifless.runtime.exeptions.CreateObjectException;
+import com.demo.ifless.runtime.exeptions.NoDefaultObjectException;
+import com.demo.ifless.runtime.scanner.SuperScanner;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 

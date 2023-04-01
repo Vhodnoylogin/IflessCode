@@ -3,7 +3,7 @@ package com.demo;
 import com.demo.experiment.classes.Daughter;
 import com.demo.experiment.classes.Son2;
 import com.demo.experiment.router.TestRouter2;
-import com.demo.ifless.exeptions.NoDefaultObjectException;
+import com.demo.ifless.runtime.exeptions.NoDefaultObjectException;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

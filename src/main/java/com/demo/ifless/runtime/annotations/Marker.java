@@ -1,7 +1,7 @@
-package com.demo.ifless.annotations;
+package com.demo.ifless.runtime.annotations;
 
 
-import com.demo.ifless.router.Router;
+import com.demo.ifless.runtime.router.Router;
 
 import java.lang.annotation.*;
 

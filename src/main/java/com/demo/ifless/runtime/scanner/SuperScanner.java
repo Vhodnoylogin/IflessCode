@@ -1,4 +1,4 @@
-package com.demo.ifless.scanner;
+package com.demo.ifless.runtime.scanner;
 
 import com.google.common.reflect.ClassPath;
 import lombok.extern.slf4j.Slf4j;

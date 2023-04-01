@@ -1,7 +1,7 @@
 package com.demo.experiment.classes;
 
 import com.demo.experiment.router.TestRouter;
-import com.demo.ifless.annotations.Marker;
+import com.demo.ifless.runtime.annotations.Marker;
 
 public interface IParent {
     String get();

@@ -1,4 +1,4 @@
-package com.demo.ifless.exeptions;
+package com.demo.ifless.runtime.exeptions;
 
 public class NoDefaultObjectException extends RuntimeException {
     public NoDefaultObjectException() {
