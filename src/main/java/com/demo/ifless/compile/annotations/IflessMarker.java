@@ -1,18 +1,17 @@
-package com.demo.ifless.runtime.annotations;
-
+package com.demo.ifless.compile.annotations;
 
 import com.demo.ifless.constants.Constants;
 import com.demo.ifless.runtime.router.Router;
 
 import java.lang.annotation.*;
 
-@Retention(RetentionPolicy.RUNTIME)
+@Retention(RetentionPolicy.CLASS)
 @Target({ElementType.TYPE})
-@Repeatable(value = Markers.class)
-public @interface Marker {
+@Repeatable(value = IflessMarkers.class)
+public @interface IflessMarker {
     String uniqueCheckName() default Constants.NON_SPECIFIC_NAME;
 
     Class<? extends Router<?>> router();
+
     boolean isDefault() default false;
 }
-

@@ -1,5 +1,6 @@
 package com.demo.ifless.runtime.router;
 
+import com.demo.ifless.constants.Constants;
 import com.demo.ifless.runtime.annotations.Marker;
 import com.demo.ifless.runtime.exeptions.CreateObjectException;
 import com.demo.ifless.runtime.exeptions.NoDefaultObjectException;
@@ -18,7 +19,6 @@ import java.util.stream.Collectors;
 
 @Slf4j
 public abstract class Router<T> {
-    public static final String NON_SPECIFIC_NAME = "";
     private static final Class<Marker> MARKER = Marker.class;
     private final Map<String, Supplier<T>> map = new HashMap<>();
     private final Class<T> clazz;
@@ -43,8 +43,8 @@ public abstract class Router<T> {
                 return null;
             }
             var name = anno.get().uniqueCheckName();
-            name = NON_SPECIFIC_NAME.equals(name) ? x.getName() : name;
-            name = anno.get().isDefault() ? NON_SPECIFIC_NAME : name;
+            name = Constants.NON_SPECIFIC_NAME.equals(name) ? x.getName() : name;
+            name = anno.get().isDefault() ? Constants.NON_SPECIFIC_NAME : name;
             return name;
         };
 
@@ -75,8 +75,8 @@ public abstract class Router<T> {
             this.map.put(key, () -> res);
             return res;
         }
-        if (this.map.containsKey(NON_SPECIFIC_NAME)) {
-            var res = this.map.get(NON_SPECIFIC_NAME).get();
+        if (this.map.containsKey(Constants.NON_SPECIFIC_NAME)) {
+            var res = this.map.get(Constants.NON_SPECIFIC_NAME).get();
             this.map.put(key, () -> res);
             return res;
         }
