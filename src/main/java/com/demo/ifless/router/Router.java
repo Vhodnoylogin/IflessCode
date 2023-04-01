@@ -4,6 +4,7 @@ import com.demo.ifless.annotations.Marker;
 import com.demo.ifless.exeptions.CreateObjectException;
 import com.demo.ifless.exeptions.NoDefaultObjectException;
 import com.demo.ifless.scanner.SuperScanner;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.InvocationTargetException;
@@ -87,7 +88,7 @@ public abstract class Router<T> {
 //        }
     }
 
-    public T getObject(String key) throws NoDefaultObjectException, CreateObjectException {
+    public T getObject(@NonNull String key) throws NoDefaultObjectException, CreateObjectException {
         if (this.map.containsKey(key)) {
             var res = this.map.get(key).get();
             this.map.put(key, () -> res);
