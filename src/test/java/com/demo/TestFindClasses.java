@@ -4,7 +4,6 @@ import com.demo.ifless.exeptions.CreateObjectException;
 import com.demo.ifless.router.Router;
 import com.demo.ifless.scanner.SuperScanner;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -15,7 +14,6 @@ public class TestFindClasses {
     @Test
     public void testFindAnything() {
         var res = SuperScanner.ALL_CLASSES.getAllClasses();
-//        log.info("{}", res);
 
         // не работает, почему-то бросает экмепшн. Хотя запускается.
 //        assertThatThrownBy(SuperScanner.ALL_CLASSES::getAllClasses)

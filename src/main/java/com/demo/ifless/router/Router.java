@@ -29,7 +29,6 @@ public abstract class Router<T> {
     }
 
     private void init() {
-
         Predicate<Class<?>> isForCurrentRouterPredicate =
                 x -> Arrays.stream(x.getAnnotationsByType(MARKER))
                         .anyMatch(anno -> anno.router() == this.getClass());
@@ -40,6 +39,7 @@ public abstract class Router<T> {
                     .findAny();
             if (anno.isEmpty()) {
                 // условие бесполезное, так как всегда сначала надо применять isForCurrentRouterPredicate()
+                // мертвый код
                 return null;
             }
             var name = anno.get().uniqueCheckName();
@@ -51,7 +51,9 @@ public abstract class Router<T> {
         Function<Class<?>, Supplier<T>> genFunc = x ->
                 () -> {
                     try {
-                        return ((Class<T>) x).getConstructor().newInstance();
+                        @SuppressWarnings("unchecked")
+                        var res = ((Class<T>) x).getConstructor().newInstance();
+                        return res;
                     } catch (InvocationTargetException | InstantiationException | IllegalAccessException |
                              NoSuchMethodException e) {
                         throw new CreateObjectException(e);
@@ -65,27 +67,6 @@ public abstract class Router<T> {
                 .filter(this.clazz::isAssignableFrom)
                 .collect(Collectors.toMap(nameFunc, genFunc));
         this.map.putAll(allGenObjects);
-
-//        for (Class<?> annotatedClass : SuperScanner.ALL_CLASSES
-//                .findAnnotatedClasses(MARKER)) {
-//            log.info("{}", annotatedClass);
-//
-//            var test1 = Arrays.stream(annotatedClass.getAnnotationsByType(MARKER))
-//                    .peek(x -> log.info("test 1 annotation = {}", x))
-//                    .peek(x -> log.info("x.router() == this.getClass() - {}", x.router() == this.getClass()))
-//                    .anyMatch(anno -> anno.router() == this.getClass());
-//            if(test1){
-//                var test2 = this.clazz.isAssignableFrom(annotatedClass);
-//                log.info("{} parent of {} - {}", this.clazz, annotatedClass, test2);
-//                if(test2){
-//                    var name = nameFunc.apply(annotatedClass);
-//                    var ob = genFunc.apply(annotatedClass);
-//                    log.info("name = \"{}\", object = {}", name, ob);
-//                    this.map.put(name, ob);
-//                }
-//            }
-//            log.info("__________________");
-//        }
     }
 
     public T getObject(@NonNull String key) throws NoDefaultObjectException, CreateObjectException {

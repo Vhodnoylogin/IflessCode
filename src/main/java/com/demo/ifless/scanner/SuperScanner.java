@@ -59,7 +59,6 @@ public class SuperScanner {
 
     public <T extends Annotation> List<Class<?>> findAnnotatedClasses(Class<T> clazz) {
         return this.allClasses.stream()
-//                .filter(x -> x.isAnnotationPresent(clazz))
                 .filter(x -> x.getAnnotationsByType(clazz).length > 0)
                 .toList();
     }
