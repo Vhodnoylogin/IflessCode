@@ -4,10 +4,7 @@ import com.demo.experiment.router.TestRouter;
 import com.demo.ifless.annotations.Marker;
 import com.demo.ifless.scanner.SuperScanner;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Tags;
 import org.junit.jupiter.api.Test;
-
-import java.util.function.Function;
 
 @Slf4j
 public class FindAnnoClasses {

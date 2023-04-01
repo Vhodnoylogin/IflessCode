@@ -3,12 +3,12 @@ package com.demo.ifless.scanner;
 import com.google.common.reflect.ClassPath;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class SuperScanner {
@@ -24,30 +24,33 @@ public class SuperScanner {
         init("");
     }
 
-    private void init(String rootPackage) {
+
+    private static Set<Class<?>> getAllClasses(String rootPackage) {
         try {
             Predicate<ClassPath.ClassInfo> classInfoPredicate = x -> {
                 try {
                     Class.forName(x.getName());
                     return true;
-                } catch (ClassNotFoundException e) {
+                } catch (ClassNotFoundException | NoClassDefFoundError e) {
                     return false;
                 }
             };
 
-            var pack = "com.demo";
-
-            ClassPath.from(ClassLoader.getSystemClassLoader())
+            return ClassPath.from(ClassLoader.getSystemClassLoader())
                     .getAllClasses()
                     .stream()
-                    .filter(x -> x.getPackageName().startsWith(pack))
+                    .filter(x -> x.getPackageName().startsWith(rootPackage))
                     .filter(x -> !"module-info".equals(x.getSimpleName()))
                     .filter(classInfoPredicate)
                     .map(ClassPath.ClassInfo::load)
-                    .forEach(allClasses::add);
+                    .collect(Collectors.toUnmodifiableSet());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void init(String rootPackage) {
+        this.allClasses.addAll(getAllClasses(rootPackage));
     }
 
     public List<Class<?>> getAllClasses() {
@@ -56,7 +59,8 @@ public class SuperScanner {
 
     public <T extends Annotation> List<Class<?>> findAnnotatedClasses(Class<T> clazz) {
         return this.allClasses.stream()
-                .filter(x -> x.getAnnotation(clazz) != null)
+//                .filter(x -> x.isAnnotationPresent(clazz))
+                .filter(x -> x.getAnnotationsByType(clazz).length > 0)
                 .toList();
     }
 

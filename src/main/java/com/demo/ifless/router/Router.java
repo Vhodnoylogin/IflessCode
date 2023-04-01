@@ -7,6 +7,7 @@ import com.demo.ifless.scanner.SuperScanner;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -27,13 +28,22 @@ public abstract class Router<T> {
     }
 
     private void init() {
-        Predicate<Class<?>> findRouterPredicate =
-                x -> x.getAnnotation(MARKER).router() == this.clazz;
+
+        Predicate<Class<?>> isForCurrentRouterPredicate =
+                x -> Arrays.stream(x.getAnnotationsByType(MARKER))
+                        .anyMatch(anno -> anno.router() == this.getClass());
 
         Function<Class<?>, String> nameFunc = x -> {
-            var name = x.getAnnotation(MARKER).uniqueCheckName();
+            var anno = Arrays.stream(x.getAnnotationsByType(MARKER))
+                    .filter(a -> a.router() == this.getClass())
+                    .findAny();
+            if (anno.isEmpty()) {
+                // условие бесполезное, так как всегда сначала надо применять isForCurrentRouterPredicate()
+                return null;
+            }
+            var name = anno.get().uniqueCheckName();
             name = NON_SPECIFIC_NAME.equals(name) ? x.getName() : name;
-            name = x.getAnnotation(MARKER).isDefault() ? NON_SPECIFIC_NAME : name;
+            name = anno.get().isDefault() ? NON_SPECIFIC_NAME : name;
             return name;
         };
 
@@ -47,22 +57,34 @@ public abstract class Router<T> {
                     }
                 };
 
-//        var allGenObjects = SuperScanner.ALL_CLASSES
-//                .findAnnotatedClasses(MARKER)
-//                .stream()
-//                .filter(findRouterPredicate)
-//                .collect(Collectors.toMap(nameFunc, genFunc));
+        var allGenObjects = SuperScanner.ALL_CLASSES
+                .findAnnotatedClasses(MARKER)
+                .stream()
+                .filter(isForCurrentRouterPredicate)
+                .filter(this.clazz::isAssignableFrom)
+                .collect(Collectors.toMap(nameFunc, genFunc));
+        this.map.putAll(allGenObjects);
 
-
-        for (Class<?> annotatedClass : SuperScanner.ALL_CLASSES.findAnnotatedClasses(MARKER)) {
-            log.info("{}", annotatedClass);
-            var test = findRouterPredicate.test(annotatedClass);
-            log.info("{}", test);
-            var name = nameFunc.apply(annotatedClass);
-            log.info("{}", name);
-        }
-
-//        this.map.putAll(allGenObjects);
+//        for (Class<?> annotatedClass : SuperScanner.ALL_CLASSES
+//                .findAnnotatedClasses(MARKER)) {
+//            log.info("{}", annotatedClass);
+//
+//            var test1 = Arrays.stream(annotatedClass.getAnnotationsByType(MARKER))
+//                    .peek(x -> log.info("test 1 annotation = {}", x))
+//                    .peek(x -> log.info("x.router() == this.getClass() - {}", x.router() == this.getClass()))
+//                    .anyMatch(anno -> anno.router() == this.getClass());
+//            if(test1){
+//                var test2 = this.clazz.isAssignableFrom(annotatedClass);
+//                log.info("{} parent of {} - {}", this.clazz, annotatedClass, test2);
+//                if(test2){
+//                    var name = nameFunc.apply(annotatedClass);
+//                    var ob = genFunc.apply(annotatedClass);
+//                    log.info("name = \"{}\", object = {}", name, ob);
+//                    this.map.put(name, ob);
+//                }
+//            }
+//            log.info("__________________");
+//        }
     }
 
     public T getObject(String key) throws NoDefaultObjectException, CreateObjectException {

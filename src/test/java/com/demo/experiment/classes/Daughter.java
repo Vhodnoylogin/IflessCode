@@ -1,9 +1,10 @@
-package com.demo.experiment;
+package com.demo.experiment.classes;
 
 import com.demo.experiment.router.TestRouter;
+import com.demo.experiment.router.TestRouter2;
 import com.demo.ifless.annotations.Marker;
-import com.demo.ifless.router.Router;
 
+@Marker(router = TestRouter2.class)
 @Marker(router = TestRouter.class)
 public class Daughter implements IParent {
     @Override
@@ -11,3 +12,4 @@ public class Daughter implements IParent {
         return this.getClass().getName();
     }
 }
+
