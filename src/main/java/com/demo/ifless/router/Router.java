@@ -4,6 +4,7 @@ import com.demo.ifless.annotations.Marker;
 import com.demo.ifless.exeptions.CreateObjectException;
 import com.demo.ifless.exeptions.NoDefaultObjectException;
 import com.demo.ifless.scanner.SuperScanner;
+import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -13,6 +14,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+@Slf4j
 public abstract class Router<T> {
     public static final String NON_SPECIFIC_NAME = "";
     private static final Class<Marker> MARKER = Marker.class;
@@ -29,9 +31,9 @@ public abstract class Router<T> {
                 x -> x.getAnnotation(MARKER).router() == this.clazz;
 
         Function<Class<?>, String> nameFunc = x -> {
-            var name = clazz.getAnnotation(MARKER).uniqueCheckName();
-            name = NON_SPECIFIC_NAME.equals(name) ? clazz.getName() : name;
-            name = clazz.getAnnotation(MARKER).isDefault() ? NON_SPECIFIC_NAME : name;
+            var name = x.getAnnotation(MARKER).uniqueCheckName();
+            name = NON_SPECIFIC_NAME.equals(name) ? x.getName() : name;
+            name = x.getAnnotation(MARKER).isDefault() ? NON_SPECIFIC_NAME : name;
             return name;
         };
 
@@ -45,13 +47,22 @@ public abstract class Router<T> {
                     }
                 };
 
-        var allGenObjects = SuperScanner.ALL_CLASSES
-                .findAnnotatedClasses(MARKER)
-                .stream()
-                .filter(findRouterPredicate)
-                .collect(Collectors.toMap(nameFunc, genFunc));
+//        var allGenObjects = SuperScanner.ALL_CLASSES
+//                .findAnnotatedClasses(MARKER)
+//                .stream()
+//                .filter(findRouterPredicate)
+//                .collect(Collectors.toMap(nameFunc, genFunc));
 
-        this.map.putAll(allGenObjects);
+
+        for (Class<?> annotatedClass : SuperScanner.ALL_CLASSES.findAnnotatedClasses(MARKER)) {
+            log.info("{}", annotatedClass);
+            var test = findRouterPredicate.test(annotatedClass);
+            log.info("{}", test);
+            var name = nameFunc.apply(annotatedClass);
+            log.info("{}", name);
+        }
+
+//        this.map.putAll(allGenObjects);
     }
 
     public T getObject(String key) throws NoDefaultObjectException, CreateObjectException {

@@ -8,6 +8,7 @@ import java.lang.annotation.Annotation;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 
 @Slf4j
 public class SuperScanner {
@@ -25,22 +26,26 @@ public class SuperScanner {
 
     private void init(String rootPackage) {
         try {
-            var classInfo = ClassPath.from(ClassLoader.getSystemClassLoader())
+            Predicate<ClassPath.ClassInfo> classInfoPredicate = x -> {
+                try {
+                    Class.forName(x.getName());
+                    return true;
+                } catch (ClassNotFoundException e) {
+                    return false;
+                }
+            };
+
+            var pack = "com.demo";
+
+            ClassPath.from(ClassLoader.getSystemClassLoader())
                     .getAllClasses()
                     .stream()
-                    .filter(x -> x.getPackageName().startsWith(rootPackage))
-                    .toList();
-            for (var i : classInfo){
-                try{
-                    log.info("{}", i);
-                    var t = i.load();
-                }catch (Exception e){
-//                    log.info("{}",e);
-                }
-            }
-//                    .map(ClassPath.ClassInfo::load);
-//                    .forEach(allClasses::add);
-        } catch (IOException e) {
+                    .filter(x -> x.getPackageName().startsWith(pack))
+                    .filter(x -> !"module-info".equals(x.getSimpleName()))
+                    .filter(classInfoPredicate)
+                    .map(ClassPath.ClassInfo::load)
+                    .forEach(allClasses::add);
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
