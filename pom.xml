@@ -16,6 +16,13 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
+            <version>16</version>
+        </dependency>
+
+
         <!-- Auto service annotation processor -->
         <dependency>
             <groupId>com.google.auto.service</groupId>
